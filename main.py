@@ -46,7 +46,7 @@ def play():
                     loc
                 )
             else:
-                UI.get_user_input('Antimatter security system triggered.', lambda : locs['hell'].interact())
+                UI.get_user_input('Antimatter security system triggered.', lambda _ : locs['hell'].interact())
         UI.get_user_input(
             'Please enter password',
             next0,
@@ -83,7 +83,7 @@ def play():
                             loc = bob.loc
                             bob.move_random()
                             loc.interact()
-                        UI.get_user_input('Bob: " Oh, cool, that\'s a palindrome, bye."', next1, bob)
+                        UI.get_user_input('Bob: "Oh, cool, that\'s a palindrome, bye."', next1, bob)
 
                     #If it isn't you'll have to try harder
                     else:
