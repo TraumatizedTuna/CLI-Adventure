@@ -30,13 +30,13 @@ def play():
         )
     
     def int_teleporter():
-        def next0(password, loc):
-            if password == 'Do geese see God?':
+        def next0(user_input, loc):
+            if user_input == password:
                 def next1(user_input, loc):
                     if parse_user_bool(user_input):
                         if random.random() < .2:
-                            if random.random() < .5: locs.heaven.interact()
-                            else: locs.hell.interact()
+                            if random.random() < .5: locs['heaven'].interact()
+                            else: locs['hell'].interact()
                         else: hyperspace.interact()
                     else: loc.interact()
                 
@@ -46,7 +46,7 @@ def play():
                     loc
                 )
             else:
-                UI.get_user_input('Antimatter security system triggered.', lambda : locs.hell.interact())
+                UI.get_user_input('Antimatter security system triggered.', lambda : locs['hell'].interact())
         UI.get_user_input(
             'Please enter password',
             next0,
@@ -72,7 +72,7 @@ def play():
                     #Bob knows the password to the teleporter
                     elif ('password' in name or 'code' in name) and 'teleport' in name:
                         UI.get_user_input(
-                            'Bob: "Do geese see God?"',
+                            'Bob: "' + password + '"',
                             lambda user_input, loc : loc.interact(),
                             bob.loc
                         )
@@ -83,7 +83,7 @@ def play():
                             loc = bob.loc
                             bob.move_random()
                             loc.interact()
-                        UI.get_user_input('Bob: " Oh, cool, that\'s a palindrome, bye.', next1, bob)
+                        UI.get_user_input('Bob: " Oh, cool, that\'s a palindrome, bye."', next1, bob)
 
                     #If it isn't you'll have to try harder
                     else:
@@ -93,7 +93,7 @@ def play():
                                 loc = bob.loc
                                 bob.move(locs['hell'])
                                 #Add a dead Bob
-                                items['corpse'] = Item('corpse', loc, message='This used to be a happy linguist until he was brutally murdered')
+                                Item('corpse', loc, message='This used to be a happy linguist until he was brutally murdered')
                                 UI.get_user_input(
                                     'Bob was killed by the non-palindromity of your name.',
                                     lambda user_input, loc : loc.interact(),
@@ -107,8 +107,17 @@ def play():
             UI.get_user_input('Bob: "What\'s your name?"', talk_to_bob, bob, talk_to_bob)
         UI.get_user_input('Bob: "Hey, my name is Bob, did you know that\'s a palindrome?"', next0, items['bob'])
 
-    def int_satan():
-        UI.get_user_input('Satan: "Ouch!"', lambda user_input, loc : loc.interact(), items['satan'].loc)
+    def int_god():
+        def next0(user_input, god):
+            def next1(user_input, god):
+                if parse_user_bool(user_input):
+                    god.interact()
+                else:
+                    god.loc.interact()
+
+            UI.get_user_input('Keep talking to God?', next1, god)
+
+        UI.get_user_input('', next0, items['god'])
 
     def int_chair():
         def next0(user_input, chair):
@@ -123,17 +132,29 @@ def play():
         UI.get_user_input('You sit on chair.', next0, items['chair'])
     
     items = {
-        'watch': Item('watch', locs['bedroom'], 'Watch ', int_watch),
-        'teleporter': Item('teleporter', locs['bathroom'], 'Use ', int_teleporter),
-        'cat': Item('cat', locs['living_room'], 'Pet ', int_cat),
-        'bob': Item('Bob', locs['living_room'], 'Talk to ', int_bob),
-        'god': Item('God', locs['heaven'], 'Talk to '),
-        'satan': Item('Satan', locs['hell'], 'Poke ', message='Satan: "Ouch!"'),
-        'chair': Item('chair', locs['kitchen'], 'Sit on ', int_chair),
-        'alice': Item('Alice', locs['bathroom']),
-        'cloud': Item('cloud', locs['heaven']),
-        'demon': Item('demon', locs['hell'])
+        'watch':        Item('watch',       locs['bedroom'],        'Watch ',   int_watch                   ),
+        'teleporter':   Item('teleporter',  locs['bathroom'],       'Use ',     int_teleporter              ),
+        'cat':          Item('cat',         locs['living_room'],    'Pet ',     int_cat                     ),
+        'bob':          Item('Bob',         locs['living_room'],    'Talk to ', int_bob                     ),
+        'god':          Item('God',         locs['heaven'],         'Talk to ', int_god                              ),
+        'chair':        Item('chair',       locs['kitchen'],        'Sit on ',  int_chair                   ),
+        'satan':        Item('Satan',       locs['hell'],           'Poke ',    message='Satan: "Ouch!"'    ),
+        'alice':        Item('Alice',       locs['bathroom']),
+        'cloud':        Item('cloud',       locs['heaven']),
+        'demon':        Item('demon',       locs['hell'])
     }
+
+    password = random.choice([
+        'Ah, Satan sees Natasha',
+        'Do geese see God?',
+        'Go hang a salami, I\'m a lasagna hog',
+        'May a moody baby doom a yam?',
+        'Mr. Owl ate my metal worm',
+        'Nurse, I spy gypsies, run!',
+        'Oozy rat in a sanitary zoo',
+        'Won\'t lovers revolt now?'
+    ])
+
     locs['bedroom'].interact()
 
 play()
