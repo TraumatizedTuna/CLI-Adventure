@@ -104,6 +104,8 @@ def play():
                                 UI.get_user_input('Bob: "What\'s your name?', talk_to_bob, bob, talk_to_bob)
 
                         UI.get_user_input('Bob: "That\'s not a palindrome though."', next1, bob)
+
+                    
             UI.get_user_input('Bob: "What\'s your name?"', talk_to_bob, bob, talk_to_bob)
         UI.get_user_input('Bob: "Hey, my name is Bob, did you know that\'s a palindrome?"', next0, items['bob'])
 
@@ -136,7 +138,7 @@ def play():
         'teleporter':   Item('teleporter',  locs['bathroom'],       'Use ',     int_teleporter              ),
         'cat':          Item('cat',         locs['living_room'],    'Pet ',     int_cat                     ),
         'bob':          Item('Bob',         locs['living_room'],    'Talk to ', int_bob                     ),
-        'god':          Item('God',         locs['heaven'],         'Talk to ', int_god                              ),
+        'god':          Item('God',         locs['heaven'],         'Talk to ', int_god                     ),
         'chair':        Item('chair',       locs['kitchen'],        'Sit on ',  int_chair                   ),
         'satan':        Item('Satan',       locs['hell'],           'Poke ',    message='Satan: "Ouch!"'    ),
         'alice':        Item('Alice',       locs['bathroom']),
