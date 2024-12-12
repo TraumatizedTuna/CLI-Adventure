@@ -160,7 +160,6 @@ def play():
         'Go hang a salami, I\'m a lasagna hog',
         'May a moody baby doom a yam?',
         'Mr. Owl ate my metal worm',
-        'Nurse, I spy gypsies, run!',
         'Oozy rat in a sanitary zoo',
         'Won\'t lovers revolt now?'
     ])
