@@ -154,7 +154,9 @@ def play():
             satan.patience = random.random()*4+4
             not_hell = locs.copy()
             not_hell.pop('hell')
-            loc = random.choice(list(not_hell.values()))
+            not_hell = list(not_hell.values())
+            not_hell.append(hyperspace)
+            loc = random.choice(not_hell)
             UI.get_user_input(
                 'Satan: "Alright, that\'s enough! I\'m sending you to ' + loc.name + ', pathetic mortal!"',
                 lambda user_input, loc : loc.interact(),
@@ -162,13 +164,13 @@ def play():
             )
 
     items = {
-        'watch':        Item('watch',       locs['bedroom'],        'Watch ',   int_watch                   ),
-        'teleporter':   Item('teleporter',  locs['bathroom'],       'Use ',     int_teleporter              ),
-        'cat':          Item('cat',         locs['living_room'],    'Pet ',     int_cat                     ),
-        'bob':          Item('Bob',         locs['living_room'],    'Talk to ', int_bob                     ),
-        'god':          Item('God',         locs['heaven'],         'Talk to ', int_god                     ),
-        'chair':        Item('chair',       locs['kitchen'],        'Sit on ',  int_chair                   ),
-        'satan':        Item('Satan',       locs['hell'],           'Poke ',    int_satan, args={'patience': random.random()*4+4}    ),
+        'watch':        Item('watch',       locs['bedroom'],        'Watch ',   int_watch       ),
+        'teleporter':   Item('teleporter',  locs['bathroom'],       'Use ',     int_teleporter  ),
+        'cat':          Item('cat',         locs['living_room'],    'Pet ',     int_cat         ),
+        'bob':          Item('Bob',         locs['living_room'],    'Talk to ', int_bob         ),
+        'god':          Item('God',         locs['heaven'],         'Talk to ', int_god         ),
+        'chair':        Item('chair',       locs['kitchen'],        'Sit on ',  int_chair       ),
+        'satan':        Item('Satan',       locs['hell'],           'Poke ',    int_satan, args={'patience': random.random()*4+4}),
         'alice':        Item('Alice',       locs['bathroom']),
         'cloud':        Item('cloud',       locs['heaven']),
         'demon':        Item('demon',       locs['hell'])
