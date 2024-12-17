@@ -156,7 +156,7 @@ def play():
             not_hell.pop('hell')
             loc = random.choice(list(not_hell.values()))
             UI.get_user_input(
-                'Satan: "Alright, that\'s enough! I\'m sending you to '+loc.name+', pathetic mortal!',
+                'Satan: "Alright, that\'s enough! I\'m sending you to '+loc.name+', pathetic mortal!"',
                 lambda user_input, loc : loc.interact(),
                 loc
             )
