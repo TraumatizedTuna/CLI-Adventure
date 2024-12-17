@@ -61,13 +61,15 @@ class Location:
 class Item:
     loc = ''
 
-    def __init__(self, name, loc, command = 'Check out ', interact = None, message = ''):
+    def __init__(self, name, loc, command = 'Check out ', interact = None, message = '', args = {}):
         self.name = name
         self.move(loc)
         self.command = command
         if interact:
             self.interact = interact
         self.message = message or 'This is ' + self.name
+        for k in args.keys():
+            setattr(self, k, args[k])
     
     def interact(self):
         UI.get_user_input(

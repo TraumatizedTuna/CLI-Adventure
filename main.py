@@ -141,6 +141,26 @@ def play():
 
         UI.get_user_input('You sit on chair.', next0, items['chair'])
     
+    def int_satan():
+        satan = items['satan']
+        if satan.patience > 0:
+            satan.patience -= 1
+            UI.get_user_input(
+                'Satan: "Ouch!"',
+                lambda user_input, loc : loc.interact(),
+                satan.loc
+            )
+        else:
+            satan.patience = random.random()*7+5
+            not_hell = locs.copy()
+            not_hell.pop('hell')
+            loc = random.choice(list(not_hell.values()))
+            UI.get_user_input(
+                'Satan: "Alright, that\'s enough! I\'m sending you to '+loc.name+', pathetic mortal!',
+                lambda user_input, loc : loc.interact(),
+                loc
+            )
+
     items = {
         'watch':        Item('watch',       locs['bedroom'],        'Watch ',   int_watch                   ),
         'teleporter':   Item('teleporter',  locs['bathroom'],       'Use ',     int_teleporter              ),
@@ -148,7 +168,7 @@ def play():
         'bob':          Item('Bob',         locs['living_room'],    'Talk to ', int_bob                     ),
         'god':          Item('God',         locs['heaven'],         'Talk to ', int_god                     ),
         'chair':        Item('chair',       locs['kitchen'],        'Sit on ',  int_chair                   ),
-        'satan':        Item('Satan',       locs['hell'],           'Poke ',    message='Satan: "Ouch!"'    ),
+        'satan':        Item('Satan',       locs['hell'],           'Poke ',    int_satan, args={'patience': random.random()*7+5}    ),
         'alice':        Item('Alice',       locs['bathroom']),
         'cloud':        Item('cloud',       locs['heaven']),
         'demon':        Item('demon',       locs['hell'])
