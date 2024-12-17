@@ -170,7 +170,7 @@ def play():
         'bob':          Item('Bob',         locs['living_room'],    'Talk to ', int_bob         ),
         'god':          Item('God',         locs['heaven'],         'Talk to ', int_god         ),
         'chair':        Item('chair',       locs['kitchen'],        'Sit on ',  int_chair       ),
-        'satan':        Item('Satan',       locs['hell'],           'Poke ',    int_satan, args={'patience': random.random()*4+4}),
+        'satan':        Item('Satan',       locs['hell'],           'Poke ',    int_satan, attr={'patience': random.random()*4+4}),
         'alice':        Item('Alice',       locs['bathroom']),
         'cloud':        Item('cloud',       locs['heaven']),
         'demon':        Item('demon',       locs['hell'])
