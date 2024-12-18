@@ -5,6 +5,6 @@ class UI:
         print('--------------------------------------------------\n\n'+loc_name)
 
     @staticmethod
-    def get_user_input(info: str, next: callable, *args):
+    def get_user_input(info: str, next: callable, *args) -> None:
         print(info)
         next(input(), *args)

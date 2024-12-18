@@ -22,6 +22,9 @@ def play():
     Location.connect(locs['living_room'], locs['bathroom'])
     Location.connect(locs['living_room'], locs['kitchen'])
 
+
+    # Interaction methodss for special items.
+    # These will be passed into the Item constructor to override the defalt interactions method.
     def int_watch():
         UI.get_user_input(
             "It's " + datetime.now().strftime('%X'),
@@ -176,6 +179,8 @@ def play():
         'demon':        Item('demon',       locs['hell'])
     }
 
+    # Set the password to teleporter to a random palindrome.
+    # This way, the player can't reuse the password from a previous session.
     password = random.choice([
         'Ah, Satan sees Natasha',
         'Do geese see God?',
@@ -186,6 +191,7 @@ def play():
         'Won\'t lovers revolt now?'
     ])
 
+    # Start the game in bedroom
     locs['bedroom'].interact()
 
 play()
