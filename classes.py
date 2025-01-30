@@ -1,6 +1,7 @@
 import numpy as np
 import random
 
+from utilities import *
 from ui import UI
 
 class Location:
@@ -40,23 +41,11 @@ class Location:
             actions.append(item)
             options += '\n(' + str(i) + ') ' + item.command + item.name
         
-        # Method that figures out what player wants to interact with and calls its interact() function
-        def next(user_input: str, actions: list):
-            action = None
-            # Loop to insist on valid input
-            while True:
-                try:
-                    action = actions[int(user_input)-1]
-                    break
-                except:
-                    # Politely ask user to provide valid input
-                    user_input = input('Try again stupid\n')
-
-            action.interact()
+        
 
         UI.get_user_input(
             'Options:' + options.replace('\n', '\n  '), # Indent options
-            next,
+            choose_action,
             actions    
         )
                 
@@ -99,3 +88,21 @@ class Item:
         locs = list(self.loc.neighbors)
         if len(locs):
             self.move(random.choice(locs))
+
+class Animal(Item):
+    def __init__(self, name, loc, command='Check out ', interact=None, message='', attr={}, player_love = {'main': 0}):
+        super().__init__(name, loc, command, interact, message, attr)
+        self.player_love = player_love
+    
+    def get_total_player_love(self):
+        love = 0
+        for k in self.player_love.keys():
+            love += self.player_love[k]
+        return love
+    
+    def interact(self):
+        UI.get_user_input(
+            self.message,
+            lambda user_input, loc : loc.interact(),
+            self.loc
+        )

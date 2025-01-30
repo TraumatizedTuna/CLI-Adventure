@@ -6,6 +6,8 @@ import random
 
 
 def play():
+    player_items = set()
+
     locs = {
         'living_room': Location('living room'),
         'bedroom': Location('bedroom'),
@@ -35,16 +37,17 @@ def play():
     def int_teleporter():
         def next0(user_input, loc):
             if user_input == password:
+                err_prob = .2 if items['bike helmet'] in player_items else .8
                 def next1(user_input, loc):
                     if parse_user_bool(user_input):
-                        if random.random() < .2:
+                        if random.random() < err_prob:
                             if random.random() < .5: locs['heaven'].interact()
                             else: locs['hell'].interact()
                         else: hyperspace.interact()
                     else: loc.interact()
                 
                 UI.get_user_input(
-                    'Proceed into hyperspace? (Probability of fatal error: 2E-1)',
+                    f'Proceed into hyperspace? (Probability of fatal error: {err_prob*10}E-1)',
                     next1,
                     loc
                 )
@@ -64,31 +67,48 @@ def play():
         UI.get_user_input('Cat successfully petted.', next, items['cat'])
 
     def int_bob():
-        def next0(user_input, bob):
-            def check_password(user_input, loc):
+        def next0(user_input, bob: Animal):
+            def check_password(user_input, bob: Animal):
                 if ('password' in user_input or 'code' in user_input) and 'port' in user_input:
+                    love = bob.get_total_player_love()
+                    if love > 10:
+                        msg = password
+                    elif love > -10:
+                        msg = 'I\'m sorry, that\'s a secret.'
+                    else:
+                        msg = 'I\'m not telling you the password because you suck!'
+                    loc = bob.loc
+                    bob.move_random()
                     UI.get_user_input(
-                        'Bob: "' + password + '"',
+                        'Bob: "' + msg + '"',
                         lambda user_input, loc : loc.interact(),
                         loc
                     )
                     return True
                 return False
 
-            if not check_password(clean_str(user_input), bob.loc):
+            if not check_password(clean_str(user_input), bob):
+                if parse_user_bool(user_input, True, 'Bob: "Huh?"'):
+                    bob.player_love['main'] += .1
+                else:
+                    bob.player_love['main'] -= .1
                 def talk_to_bob(name, bob, talk_to_bob):
                     name = clean_str(name)
                     if name:
                         #You have to be more creative than that
                         if name == 'bob':
+                            bob.player_love['main'] -= 1
                             UI.get_user_input('Bob: "Yeah, right. What\'s your name?"', talk_to_bob, bob, talk_to_bob)
                         
                         #Bob knows the password to the teleporter
-                        elif check_password(name, bob.loc):
+                        elif check_password(name, bob):
                             pass
                         
                         #If your name is a palindrome Bob will be satisfied and leave you alone
                         elif name == name [::-1]:
+                            #Bob will like you more now that he knows your name is a palindrome. Palindrome love can't exceed 1.
+                            bob.player_love['pal'] = min(bob.player_love['pal'] + 10, 12)
+
                             def next1(user_input, bob):
                                 loc = bob.loc
                                 bob.move_random()
@@ -97,9 +117,14 @@ def play():
 
                         #If it isn't you'll have to try harder
                         else:
+                            #Bob will like you less
+                            bob.player_love['pal'] -= 20
+                            bob.player_love['main'] -= 3
+
                             def next1(user_input, bob):
                                 #One in five risk that Bob dies
                                 if random.random() < .2:
+                                    bob.player_love['main'] -= 10
                                     loc = bob.loc
                                     bob.move(locs['hell'])
                                     #Add a dead Bob
@@ -115,6 +140,7 @@ def play():
 
                             UI.get_user_input('Bob: "That\'s not a palindrome though."', next1, bob)
                     else:
+                        bob.player_love['main'] -= 1
                         UI.get_user_input('Bob: "Come on, just tell me your name!"', talk_to_bob, bob, talk_to_bob)
 
                 UI.get_user_input('Bob: "What\'s your name?"', talk_to_bob, bob, talk_to_bob)
@@ -144,6 +170,16 @@ def play():
 
         UI.get_user_input('You sit on chair.', next0, items['chair'])
     
+    def int_helmet():
+        helmet = items['bike helmet']
+        player_items.add(helmet)
+        helmet.loc.remove_item(helmet)
+        UI.get_user_input(
+            "You wear helmet",
+            lambda user_input, loc : loc.interact(),
+            helmet.loc
+        )
+
     def int_satan():
         satan = items['satan']
         if satan.patience > 0:
@@ -170,10 +206,11 @@ def play():
         'watch':        Item('watch',       locs['bedroom'],        'Watch ',   int_watch       ),
         'teleporter':   Item('teleporter',  locs['bathroom'],       'Use ',     int_teleporter  ),
         'cat':          Item('cat',         locs['living_room'],    'Pet ',     int_cat         ),
-        'bob':          Item('Bob',         locs['living_room'],    'Talk to ', int_bob         ),
+        'bob':          Animal('Bob',       locs['living_room'],    'Talk to ', int_bob,    player_love = {'main': 0, 'pal': 0}),
         'god':          Item('God',         locs['heaven'],         'Talk to ', int_god         ),
         'chair':        Item('chair',       locs['kitchen'],        'Sit on ',  int_chair       ),
-        'satan':        Item('Satan',       locs['hell'],           'Poke ',    int_satan, attr={'patience': random.random()*4+4}),
+        'bike helmet':  Item('bike helmet', locs['kitchen'],        'Put on ',  int_helmet      ),
+        'satan':        Item('Satan',       locs['hell'],           'Poke ',    int_satan,  attr={'patience': random.random()*4+4}),
         'alice':        Item('Alice',       locs['bathroom']),
         'cloud':        Item('cloud',       locs['heaven']),
         'demon':        Item('demon',       locs['hell'])
