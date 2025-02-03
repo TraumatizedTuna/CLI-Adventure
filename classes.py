@@ -4,6 +4,8 @@ import random
 from utilities import *
 from ui import UI
 
+player_items = set()
+
 class Location:
     def __init__(self, name: str, prep='in'):
         self.name = name
@@ -60,10 +62,17 @@ class Location:
 class Item:
     loc = ''
 
-    def __init__(self, name, loc, command = 'Check out ', interact = None, message = '', attr = {}):
+    def __init__(self, name, loc, command = '', interact = None, message = '', attr = {}, pickupable = False, pick_up_msg = ''):
         self.name = name
         self.move(loc)
         self.command = command
+        if pickupable:
+            self.interact = self.pick_up
+            self.pick_up_msg = pick_up_msg or 'You have ' + self.name + '.'
+            if not command:
+                self.command = 'Pick up '
+        elif not command:
+            self.command = 'Check out '
         if interact:
             self.interact = interact
         self.message = message or 'This is ' + self.name
@@ -78,6 +87,15 @@ class Item:
             self.loc
         )
     
+    def pick_up(self):
+        player_items.add(self)
+        self.loc.remove_item(self)
+        UI.get_user_input(
+            self.pick_up_msg,
+            lambda user_input, loc : loc.interact(),
+            self.loc
+        )
+
     def move(self, destination):
         if self.loc:
             self.loc.remove_item(self)

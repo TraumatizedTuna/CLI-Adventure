@@ -6,9 +6,9 @@ import random
 
 
 def play():
-    player_items = set()
 
     locs = {
+        'back_yard': Location('back yard'),
         'living_room': Location('living room'),
         'bedroom': Location('bedroom'),
         'bathroom': Location('bathroom'),
@@ -20,6 +20,7 @@ def play():
     hyperspace = Location('hyperspace')
     hyperspace.add_neighbors(locs)
 
+    Location.connect(locs['back_yard'], locs['living_room'])
     Location.connect(locs['bedroom'], locs['living_room'])
     Location.connect(locs['living_room'], locs['bathroom'])
     Location.connect(locs['living_room'], locs['kitchen'])
@@ -169,16 +170,6 @@ def play():
             UI.get_user_input('Keep sitting on chair?', next1, chair)
 
         UI.get_user_input('You sit on chair.', next0, items['chair'])
-    
-    def int_helmet():
-        helmet = items['bike helmet']
-        player_items.add(helmet)
-        helmet.loc.remove_item(helmet)
-        UI.get_user_input(
-            "You wear helmet",
-            lambda user_input, loc : loc.interact(),
-            helmet.loc
-        )
 
     def int_satan():
         satan = items['satan']
@@ -209,9 +200,10 @@ def play():
         'bob':          Animal('Bob',       locs['living_room'],    'Talk to ', int_bob,    player_love = {'main': 0, 'pal': 0}),
         'god':          Item('God',         locs['heaven'],         'Talk to ', int_god         ),
         'chair':        Item('chair',       locs['kitchen'],        'Sit on ',  int_chair       ),
-        'bike helmet':  Item('bike helmet', locs['kitchen'],        'Put on ',  int_helmet      ),
+        'bike helmet':  Item('bike helmet', locs['kitchen'],        'Put on ',  pickupable=True, pick_up_msg='You wear helmet.'),
+        'stop_sign':    Item('stop sign', locs['back_yard'],        'Steal ',   pickupable=True),
         'satan':        Item('Satan',       locs['hell'],           'Poke ',    int_satan,  attr={'patience': random.random()*4+4}),
-        'alice':        Item('Alice',       locs['bathroom']),
+        'alice':        Item('Alice',       locs['back_yard']),
         'cloud':        Item('cloud',       locs['heaven']),
         'demon':        Item('demon',       locs['hell'])
     }
