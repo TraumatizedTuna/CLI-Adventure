@@ -25,7 +25,7 @@ class Location:
     
     # Removes item from location
     def remove_item(self, item):
-        self.items.remove(item)
+        self.items.discard(item)
     
     # Called when player enters location.
     # Lists neighbors and items so player can interact with them.
@@ -60,12 +60,13 @@ class Location:
                     loc0.add_neighbors({'loc':loc1})
 
 class Item:
-    loc = ''
+    loc = None
 
     def __init__(self, name, loc, command = '', interact = None, message = '', attr = {}, pickupable = False, pick_up_msg = ''):
         self.name = name
         self.move(loc)
         self.command = command
+        self.items = set()
         if pickupable:
             self.interact = self.pick_up
             self.pick_up_msg = pick_up_msg or 'You have ' + self.name + '.'
@@ -108,9 +109,13 @@ class Item:
             self.move(random.choice(locs))
 
 class Animal(Item):
-    def __init__(self, name, loc, command='Check out ', interact=None, message='', attr={}, player_love = {'main': 0}):
+    def __init__(self, name, loc, command='Check out ', interact=None, message='', attr={}, player_love = {'main': 0}, talk=None, gift_react=None):
         super().__init__(name, loc, command, interact, message, attr)
         self.player_love = player_love
+        if talk:
+            self.talk = talk
+        if gift_react:
+            self.gift_react = gift_react
     
     def get_total_player_love(self):
         love = 0
@@ -118,9 +123,46 @@ class Animal(Item):
             love += self.player_love[k]
         return love
     
+    def talk(self):
+        pass
+
     def interact(self):
-        UI.get_user_input(
+        UI.set_loc(self.message)
+        actions = [{'func': self.talk, 'args': []}] # List of things to do with animal
+        options = f'\n(1) Talk to {self.name}' # String to present available actions to player
+        i=1 # Option index as presented to player, one more than actual list index
+        for item in player_items:
+            i+=1
+            actions.append({'func': self.gift, 'args': [item]})
+            options += '\n(' + str(i) + ') Give ' + item.name + ' to ' + self.name
+
+        action = None
+
+        user_input = input('Options:' + options.replace('\n', '\n  ') + '\n')
+        # Loop to insist on valid input
+        while True:
+            try:
+                action = actions[int(user_input)-1]
+                break
+            except:
+                # Politely ask user to provide valid input
+                user_input = input('Try again stupid\n')
+        action['func'](*action['args'])
+
+        """ UI.get_user_input(
             self.message,
             lambda user_input, loc : loc.interact(),
             self.loc
+        ) """
+    def gift(self, i: Item):
+        i.loc.remove_item(i) # Shouldn't do anything
+        player_items.discard(i)
+        self.items.add(i)
+        self.gift_react(self, i)
+    
+    def gift_react(animal, i: Item):
+        UI.get_user_input(
+            animal.name + ': "What am I supposed to do with ' + i.name + '?"',
+            lambda user_input, loc : loc.interact(),
+            animal.loc
         )
