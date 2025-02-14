@@ -8,19 +8,21 @@ import random
 def play():
 
     locs = {
-        'back_yard': Location('back yard'),
-        'living_room': Location('living room'),
-        'bedroom': Location('bedroom'),
-        'bathroom': Location('bathroom'),
-        'kitchen': Location('kitchen'),
-        'heaven': Location('heaven'),
-        'hell': Location('hell')
+        'back_yard':    Location('back yard'),
+        'beach':        Location('beach', 'at'),
+        'living_room':  Location('living room'),
+        'bedroom':      Location('bedroom'),
+        'bathroom':     Location('bathroom'),
+        'kitchen':      Location('kitchen'),
+        'heaven':       Location('heaven'),
+        'hell':         Location('hell')
     }
 
     hyperspace = Location('hyperspace')
     hyperspace.add_neighbors(locs)
 
     Location.connect(locs['back_yard'], locs['living_room'])
+    Location.connect(locs['back_yard'], locs['beach'])
     Location.connect(locs['bedroom'], locs['living_room'])
     Location.connect(locs['living_room'], locs['bathroom'])
     Location.connect(locs['living_room'], locs['kitchen'])
@@ -68,8 +70,8 @@ def play():
         UI.get_user_input('Cat successfully petted.', next, items['cat'])
 
     def talk_bob():
-        def next0(user_input, bob: Animal):
-            def check_password(user_input, bob: Animal):
+        def next0(user_input, bob: Character):
+            def check_password(user_input, bob: Character):
                 if ('password' in user_input or 'code' in user_input) and 'port' in user_input:
                     love = bob.get_total_player_love()
                     if love > 10:
@@ -152,6 +154,9 @@ def play():
         if all(map(lambda x : x in bob.items, [items['pot'], items['stop_sign']])) and i in [items['pot'], items['stop_sign']]:
             msg = 'Bob: "Yay! Such a beautiful new specimen for my collection of stop pots! I am eternally grateful!"'
             bob.player_love['main'] += 20
+        elif i == items['kayak']:
+            msg = 'Bob: "Wow! I\'ve always wanted a kayak! Thank you so much!"'
+            bob.player_love['main'] += 15
         else:
             msg = 'Bob: "What am I supposed to do with ' + i.name + '?"'
 
@@ -211,14 +216,16 @@ def play():
         'watch':        Item('watch',       locs['bedroom'],        'Watch ',   int_watch       ),
         'teleporter':   Item('teleporter',  locs['bathroom'],       'Use ',     int_teleporter  ),
         'cat':          Item('cat',         locs['living_room'],    'Pet ',     int_cat         ),
-        'bob':          Animal('Bob',       locs['living_room'],    '',         player_love = {'main': 0, 'pal': 0}, talk=talk_bob, gift_react=gift_react_bob),
+        'bob':          Character('Bob',    locs['living_room'],    '',         player_love = {'main': 0, 'pal': 0}, talk=talk_bob, gift_react=gift_react_bob),
         'god':          Item('God',         locs['heaven'],         'Talk to ', int_god         ),
         'chair':        Item('chair',       locs['kitchen'],        'Sit on ',  int_chair       ),
         'bike helmet':  Item('bike helmet', locs['kitchen'],        'Put on ',  pickupable=True, pick_up_msg='You wear helmet.'),
         'stop_sign':    Item('stop sign',   locs['back_yard'],      'Steal ',   pickupable=True),
         'pot':          Item('flower pot',  locs['kitchen'],                    pickupable=True),
+        'beach_ball':   Item('beach ball',  locs['beach'],          pickupable=True),
+        'kayak':        Item('kayak',       locs['beach'],          'Steal ',          pickupable=True ),
         'satan':        Item('Satan',       locs['hell'],           'Poke ',    int_satan,  attr={'patience': random.random()*4+4}),
-        'alice':        Item('Alice',       locs['back_yard']),
+        'alice':        Character('Alice',  locs['back_yard']),
         'cloud':        Item('cloud',       locs['heaven']),
         'demon':        Item('demon',       locs['hell'])
     }

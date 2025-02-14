@@ -108,7 +108,7 @@ class Item:
         if len(locs):
             self.move(random.choice(locs))
 
-class Animal(Item):
+class Character(Item):
     def __init__(self, name, loc, command='Check out ', interact=None, message='', attr={}, player_love = {'main': 0}, talk=None, gift_react=None):
         super().__init__(name, loc, command, interact, message, attr)
         self.player_love = player_love
@@ -124,7 +124,11 @@ class Animal(Item):
         return love
     
     def talk(self):
-        pass
+        UI.get_user_input(
+            f'{self.name}: "Hello, my name is {self.name}."',
+            lambda user_input, loc : loc.interact(),
+            self.loc
+        )
 
     def interact(self):
         UI.set_loc(self.message)
@@ -160,9 +164,9 @@ class Animal(Item):
         self.items.add(i)
         self.gift_react(self, i)
     
-    def gift_react(animal, i: Item):
+    def gift_react(self, character, i: Item):
         UI.get_user_input(
-            animal.name + ': "What am I supposed to do with ' + i.name + '?"',
+            character.name + ': "What am I supposed to do with ' + i.name + '?"',
             lambda user_input, loc : loc.interact(),
-            animal.loc
+            character.loc
         )
